@@ -39,7 +39,7 @@ public struct CodeEditor: AppKitOrUIKitViewRepresentable {
         appKitOrUIKitView.setReadOnly(!context.environment.isEnabled)
         appKitOrUIKitView.setMode(mode)
         appKitOrUIKitView.setFontSize(fontSize)
-        appKitOrUIKitView.setContent(text)
+        appKitOrUIKitView.setText(text)
         appKitOrUIKitView.clearSelection()
         
         context.environment.colorScheme == .dark

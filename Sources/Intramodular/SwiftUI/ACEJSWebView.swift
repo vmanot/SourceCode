@@ -11,9 +11,10 @@ public class ACEJSWebView: _WKWebView {
         static let aceEditorDidChange = "aceEditorDidChange"
     }
     
+    private var text = String()
+    
     var onTextChange: ((String) -> Void)?
     
-    private var currentContent: String = ""
     private var pageLoaded = false
     private var pendingFunctions = [JavascriptFunction]()
     
@@ -64,12 +65,12 @@ public class ACEJSWebView: _WKWebView {
         callJavascript(javascriptString: "editor.setOptions({ maxLines: Infinity });")
     }
     
-    func setContent(_ value: String) {
-        guard currentContent != value else {
+    func setText(_ value: String) {
+        guard text != value else {
             return
         }
         
-        currentContent = value
+        text = value
         
         //
         // It's tricky to pass FULL JSON or HTML text with \n or "", ... into JS Bridge
@@ -158,7 +159,7 @@ extension ACEJSWebView {
 
 extension ACEJSWebView: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-
+        
     }
 }
 
@@ -168,7 +169,9 @@ extension ACEJSWebView: WKScriptMessageHandler {
             pageLoaded = true
             callPendingFunctions()
         } else if message.name == Constants.aceEditorDidChange {
-            if let text = message.body as? String {
+            if let text = message.body as? String, self.text != text {
+                self.text = text
+                
                 self.onTextChange?(text)
             }
         }
