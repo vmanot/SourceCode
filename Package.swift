@@ -27,6 +27,7 @@ let package = Package(
             from: "0.50300.0"
         ),
         .package(url: "https://github.com/NSHipster/SwiftSyntaxHighlighter", .branch("master")),
+        .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", .branch("master")),
     ],
     targets: [
         .target(
@@ -38,8 +39,12 @@ let package = Package(
                 "SwiftSemantics",
                 "SwiftSyntax",
                 "SwiftSyntaxHighlighter",
+                "SwiftUIX",
             ],
-            path: "Sources"
+            path: "Sources",
+            resources: [
+                .copy("Resources/ace.bundle")
+            ]
         ),
         .testTarget(
             name: "SourceCodeTests",

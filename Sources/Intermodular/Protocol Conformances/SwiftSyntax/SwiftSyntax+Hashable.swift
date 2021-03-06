@@ -2,7 +2,14 @@
 // Copyright (c) Vatsal Manot
 //
 
+import Swift
 import SwiftSyntax
+
+extension AbsolutePosition: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.utf8Offset)
+    }
+}
 
 extension SourceLocation: Hashable {
     public func hash(into hasher: inout Hasher) {
