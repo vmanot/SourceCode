@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if canImport(SwiftSyntax)
+
 import Swift
 import SwiftSyntax
 
@@ -10,3 +12,5 @@ extension SourceLocation: Comparable {
         lhs.file ?? "" < rhs.file ?? "" || (lhs.file == rhs.file && lhs.offset < rhs.offset)
     }
 }
+
+#endif

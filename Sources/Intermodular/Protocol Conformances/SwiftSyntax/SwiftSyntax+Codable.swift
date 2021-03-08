@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if canImport(SwiftSyntax) 
+
 import Swift
 import SwiftSyntax
 
@@ -14,3 +16,5 @@ extension AbsolutePosition: Codable {
         self.init(utf8Offset: try decoder.decode(single: Int.self))
     }
 }
+
+#endif

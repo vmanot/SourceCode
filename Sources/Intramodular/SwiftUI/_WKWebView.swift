@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+
 import Foundation
 import SwiftUIX
 import WebKit
@@ -53,7 +55,7 @@ open class _WKWebView: WKWebView {
         scrollView.showsHorizontalScrollIndicator = false
         #endif
         
-        sizeToFit()
+        evaluateAndSizeToFit()
     }
     
     #if os(macOS)
@@ -70,7 +72,7 @@ open class _WKWebView: WKWebView {
     }
     #endif
     
-    public func sizeToFit() {
+    public func evaluateAndSizeToFit() {
         evaluateJavaScript("document.readyState", completionHandler: { result, error in
             if result == nil || error != nil {
                 return
@@ -114,3 +116,5 @@ extension _WKWebView {
         }
     }
 }
+
+#endif

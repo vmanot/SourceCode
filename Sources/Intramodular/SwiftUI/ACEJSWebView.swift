@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+
 import SwiftUIX
 import WebKit
 
@@ -12,8 +14,22 @@ public class ACEJSWebView: _WKWebView {
     }
     
     private var text = String()
+    private var currentTheme: Theme?
     
     var onTextChange: ((String) -> Void)?
+    
+    public var themeForLightMode: Theme = .solarized_light
+    public var themeForDarkMode: Theme = .solarized_dark
+    
+    var preferredColorScheme: ColorScheme = .light {
+        didSet {
+            guard preferredColorScheme != oldValue else {
+                return
+            }
+            
+            preferredColorScheme == .dark ? setTheme(themeForDarkMode) : setTheme(themeForLightMode)
+        }
+    }
     
     private var pageLoaded = false
     private var pendingFunctions = [JavascriptFunction]()
@@ -395,6 +411,37 @@ extension ACEJSWebView {
     }
 }
 
+extension ACEJSWebView {
+    public struct Annotation: Decodable {
+        enum AnnotationType: String, Decodable {
+            case error
+            case warning
+            case info
+        }
+        
+        let column: Int
+        let row: Int
+        let text: String
+        let type: AnnotationType
+        
+        init?(from dictionary: [String: Any]) {
+            guard
+                let column = dictionary["column"] as? Int,
+                let row = dictionary["row"] as? Int,
+                let text = dictionary["text"] as? String,
+                let typeRaw = dictionary["type"] as? String,
+                let type = AnnotationType(rawValue: typeRaw) else {
+                return nil
+            }
+            
+            self.column = column
+            self.row = row
+            self.text = text
+            self.type = type
+        }
+    }
+}
+
 // MARK: - Auxiliary Implementation -
 
 private struct JavascriptFunction {
@@ -408,3 +455,5 @@ private struct JavascriptFunction {
         self.callback = callback
     }
 }
+
+#endif

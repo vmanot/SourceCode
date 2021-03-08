@@ -13,8 +13,6 @@ public struct CodeEditor: AppKitOrUIKitViewRepresentable {
     var onEditingChanged: ((String) -> Void)?
     
     private let mode: ACEJSWebView.Mode
-    private let darkTheme: ACEJSWebView.Theme
-    private let lightTheme: ACEJSWebView.Theme
     private let fontSize: Int
     
     public init(
@@ -27,8 +25,6 @@ public struct CodeEditor: AppKitOrUIKitViewRepresentable {
     ) {
         self._text = text
         self.mode = mode
-        self.darkTheme = darkTheme
-        self.lightTheme = lightTheme
         self.fontSize = fontSize
         self.onEditingChanged = onEditingChanged
     }
@@ -41,10 +37,6 @@ public struct CodeEditor: AppKitOrUIKitViewRepresentable {
         appKitOrUIKitView.setFontSize(fontSize)
         appKitOrUIKitView.setText(text)
         appKitOrUIKitView.clearSelection()
-        
-        context.environment.colorScheme == .dark
-            ? appKitOrUIKitView.setTheme(darkTheme)
-            : appKitOrUIKitView.setTheme(lightTheme)
         
         return appKitOrUIKitView
     }
@@ -63,28 +55,7 @@ public struct CodeEditor: AppKitOrUIKitViewRepresentable {
         #endif
         
         appKitOrUIKitView.isScrollEnabled = context.environment.isScrollEnabled
-        
-        if !(context.coordinator.colorScheme == context.environment.colorScheme) {
-            context.environment.colorScheme == .dark ? appKitOrUIKitView.setTheme(darkTheme) : appKitOrUIKitView.setTheme(lightTheme)
-            
-            context.coordinator.set(colorScheme: context.environment.colorScheme)
-        }
-    }
-    
-    public func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-}
-
-public extension CodeEditor {
-    class Coordinator: NSObject {
-        private(set) var colorScheme: ColorScheme?
-        
-        func set(colorScheme: ColorScheme) {
-            if self.colorScheme != colorScheme {
-                self.colorScheme = colorScheme
-            }
-        }
+        appKitOrUIKitView.preferredColorScheme = context.environment.colorScheme
     }
 }
 

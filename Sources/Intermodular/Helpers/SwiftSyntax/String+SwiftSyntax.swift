@@ -2,7 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
-import Foundation
+import FoundationX
+import Swallow
 import Swift
 import SwiftSyntax
 

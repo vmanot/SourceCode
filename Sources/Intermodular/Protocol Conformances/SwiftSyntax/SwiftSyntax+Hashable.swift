@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if canImport(SwiftSyntax)
+
 import Swift
 import SwiftSyntax
 
@@ -32,3 +34,5 @@ extension SourceRange: Hashable {
         lhs.start == rhs.start && lhs.end == rhs.end
     }
 }
+
+#endif
