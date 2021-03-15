@@ -2,7 +2,7 @@
 // Copyright (c) Vatsal Manot
 //
 
-#if canImport(SwiftSyntax) 
+#if canImport(SwiftSyntax)
 
 import Swift
 import SwiftSyntax

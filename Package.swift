@@ -17,7 +17,6 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/vmanot/FoundationX.git", .branch("master")),
         .package(url: "https://github.com/vmanot/Swallow.git", .branch("master")),
         .package(url: "https://github.com/SwiftDocOrg/SwiftMarkup.git", from: "0.2.1"),
         .package(url: "https://github.com/SwiftDocOrg/SwiftSemantics.git", from: "0.2.0"),
@@ -26,17 +25,20 @@ let package = Package(
             url: "https://github.com/apple/swift-syntax.git",
             from: "0.50300.0"
         ),
+        .package(url: "https://github.com/NSHipster/SwiftSyntaxHighlighter", .branch("master")),
         .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", .branch("master")),
+        .package(url: "https://github.com/vmanot/SimulatorKit.git", .branch("master")),
     ],
     targets: [
         .target(
             name: "SourceCode",
             dependencies: [
-                "FoundationX",
+                "SimulatorKit",
                 "Swallow",
                 "SwiftMarkup",
                 "SwiftSemantics",
                 "SwiftSyntax",
+                "SwiftSyntaxHighlighter",
                 "SwiftUIX",
             ],
             path: "Sources",
