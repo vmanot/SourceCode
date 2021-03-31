@@ -2,6 +2,8 @@
 // Copyright (c) Vatsal Manot
 //
 
+#if canImport(SwiftSyntax)
+
 import FoundationX
 import Swallow
 import Swift
@@ -45,3 +47,5 @@ extension Range where Bound == String.Index {
         )
     }
 }
+
+#endif
