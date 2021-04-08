@@ -13,6 +13,7 @@ extension AbsolutePosition: Hashable {
     }
 }
 
+#if !canImport(SwiftDoc)
 extension SourceLocation: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(file)
@@ -34,5 +35,6 @@ extension SourceRange: Hashable {
         lhs.start == rhs.start && lhs.end == rhs.end
     }
 }
+#endif
 
 #endif
