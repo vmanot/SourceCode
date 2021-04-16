@@ -34,6 +34,19 @@ public class ACEJSWebView: _WKWebView {
     private var pageLoaded = false
     private var pendingFunctions = [JavascriptFunction]()
     
+    private var estimatedContentSize: OptionalDimensions = nil {
+        didSet {
+            invalidateIntrinsicContentSize()
+        }
+    }
+    
+    override open var intrinsicContentSize: CGSize {
+        .init(
+            width: super.intrinsicContentSize.width,
+            height: estimatedContentSize.height ?? super.intrinsicContentSize.height
+        )
+    }
+    
     public init() {
         super.init(frame: .zero, configuration: Self.makeConfiguration())
         
@@ -44,6 +57,18 @@ public class ACEJSWebView: _WKWebView {
         super.init(coder: coder)
         
         setup()
+    }
+    
+    override open func evaluateAndSizeToFit() {
+        callJavascript(javascriptString: "editor.getSession().getScreenLength() * editor.renderer.lineHeight + editor.renderer.scrollBar.getWidth();") { result in
+            guard let result = (try? result.get()) as? CGFloat else {
+                super.evaluateAndSizeToFit()
+                
+                return
+            }
+            
+            self.estimatedContentSize.height = result
+        }
     }
     
     private static func makeConfiguration() -> WKWebViewConfiguration {
@@ -84,6 +109,10 @@ public class ACEJSWebView: _WKWebView {
     func setText(_ value: String) {
         guard text != value else {
             return
+        }
+        
+        defer {
+            evaluateAndSizeToFit()
         }
         
         text = value
@@ -136,7 +165,7 @@ public class ACEJSWebView: _WKWebView {
 }
 
 extension ACEJSWebView {
-    private func addFunction(function:JavascriptFunction) {
+    private func addFunction(function: JavascriptFunction) {
         pendingFunctions.append(function)
     }
     
@@ -144,8 +173,7 @@ extension ACEJSWebView {
         evaluateJavaScript(function.functionString) { (response, error) in
             if let error = error {
                 function.callback?(.failure(error))
-            }
-            else {
+            } else {
                 function.callback?(.success(response))
             }
         }
@@ -155,6 +183,7 @@ extension ACEJSWebView {
         for function in pendingFunctions {
             callJavascriptFunction(function: function)
         }
+        
         pendingFunctions.removeAll()
     }
     
@@ -164,8 +193,7 @@ extension ACEJSWebView {
     ) {
         if pageLoaded {
             callJavascriptFunction(function: JavascriptFunction(functionString: javascriptString, callback: callback))
-        }
-        else {
+        } else {
             addFunction(function: JavascriptFunction(functionString: javascriptString, callback: callback))
         }
     }
@@ -189,6 +217,8 @@ extension ACEJSWebView: WKScriptMessageHandler {
                 self.text = text
                 
                 self.onTextChange?(text)
+                
+                evaluateAndSizeToFit()
             }
         }
     }

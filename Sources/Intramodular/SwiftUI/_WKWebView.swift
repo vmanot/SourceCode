@@ -72,16 +72,13 @@ open class _WKWebView: WKWebView {
     }
     #endif
     
-    public func evaluateAndSizeToFit() {
+    open func evaluateAndSizeToFit() {
         evaluateJavaScript("document.readyState", completionHandler: { result, error in
             if result == nil || error != nil {
                 return
             }
             
-            self.evaluateJavaScript("document.body.scrollHeight", completionHandler: { result, error in
-                if let height = result as? CGFloat {
-                    self.estimatedContentSize.height = height
-                }
+            self.evaluateJavaScript("document.getElementsByTagName('html')[0].scrollHeight", completionHandler: { result, error in                self.estimatedContentSize.height = result as? CGFloat ?? 0.0
             })
         })
     }
@@ -98,17 +95,10 @@ extension _WKWebView {
                 guard self.estimatedProgress > 0.5 else {
                     return
                 }
-                
-                let js = "document.getElementsByTagName('html')[0].scrollHeight"
-                
-                self.evaluateJavaScript(js, completionHandler: { result, error in
-                    let contentHeight = result as? CGFloat ?? 0.0
-                    
-                    if contentHeight > (self.estimatedContentSize.height ?? 0) {
-                        self.estimatedContentSize.height = contentHeight
-                    }
+                                
+                evaluateJavaScript("document.getElementsByTagName('html')[0].scrollHeight", completionHandler: { result, error in
+                    self.estimatedContentSize.height = result as? CGFloat ?? 0.0
                 })
-                
             }
             
         } else {
